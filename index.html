@@ -432,7 +432,7 @@ distributed training, and ablation at scale across vision, audio, and graph data
     }
   ];
 
-  //const tagLabels = { thesis: "Thesis", sim: "Simulation", robotics: "Robotics" };
+  const tagLabels = { thesis: "Thesis", sim: "Simulation", robotics: "Robotics", sna: "Social Network Analysis"};
 
   const grid = document.getElementById('grid');
 
@@ -443,7 +443,6 @@ distributed training, and ablation at scale across vision, audio, and graph data
     return `
       <a class="card" href="${href}">
         <div class="card-top">
-          <span class="tag ${p.tag}">${tagLabels[p.tag] || p.tag}</span>
           <span class="signal" aria-hidden="true"></span>
         </div>
         <h3>${p.title}</h3>
