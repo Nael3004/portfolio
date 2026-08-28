@@ -398,36 +398,42 @@ distributed training, and ablation at scale across vision, audio, and graph data
       title: "Synthetic Data Generation for Audio-Visual Sounding Object Detection",
       description: "MSc thesis: generating synthetic training data to improve sounding object detection in audio-visual models.",
       pdf: "reports/thesis.pdf",
+      name: "thesis.pdf",
       repo: ""
     },
     {
       title: "Dimension scaled priors and dimension reduction for Bayesian optimzation",
       description: "Investigation into the dimensionality curse in Bayesian optimization and experiments with proposed solutions.",
       pdf: "reports/BO_DSP_Project.pdf",
+      name: "BO_DSP_Project.pdf",
       repo: "https://github.com/Nael3004/BoProject"
     },
     {
       title: "StarNet: Image Segmentation of Astronomy Images with SAM",
       description: "Implementation of a data pipeline and fine-tuning of SAM to segment stars in satellite images.",
       pdf: "reports/SADL_starnet.pdf",
+      name: "SADL_starnet.pdf",
       repo: "https://github.com/Nael3004/StarNet"
     },
     {
       title: "Quantum Algorithms Miniproject - Quantum Extreme Learning Machines",
       description: "Implementation and training of basic simulated quantum extreme learning machines which promise fast and stable training.",
       pdf: "reports/QA_miniproject.pdf",
+      name: "QA_miniproject.pdf",
       repo: ""
     },
     {
       title: "Analyzing the Limits of RL-driven Optimization on Chargax",
       description: "Experimentation on the limits of outcome improvements of an RL environment and the effect of future information on performance.",
       pdf: "reports/sadrl_chargax.pdf",
+      name: "sadrl_chargax.pdf",
       repo: ""
     },
     {
       title: "Community Aware Anomaly Detection in Weighted Networks",
       description: "Adaptation of the Community-Aware Detection of Anomalies (CADA) algorithm for weighted networks and experimentation with ensemble methods.",
       pdf: "reports/SNACS_Project.pdf",
+      name: "SNACS_Project.pdf",
       repo: ""
     }
   ];
@@ -437,7 +443,7 @@ distributed training, and ablation at scale across vision, audio, and graph data
   const grid = document.getElementById('grid');
 
   grid.innerHTML = projects.map(p => {
-    const params = new URLSearchParams({ pdf: p.pdf, title: p.title });
+    const params = new URLSearchParams({ pdf: p.pdf, title: p.name });
     if (p.repo) params.set('repo', p.repo);
     const href = `viewer.html?${params.toString()}`;
     return `
