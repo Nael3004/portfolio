@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Report — Nael</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a1014;
+    --panel: #101a21;
+    --line: #22323c;
+    --text: #e7ece9;
+    --text-dim: #7d939b;
+    --text-faint: #4a5c64;
+    --amber: #e8a33d;
+    --teal: #4fa98c;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  a { color: inherit; }
+
+  ::selection { background: var(--amber); color: #0a1014; }
+
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .back {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    padding: 0.3rem 0.1rem;
+  }
+  .back:hover { color: var(--text); }
+
+  .divider {
+    width: 1px;
+    height: 18px;
+    background: var(--line);
+    flex-shrink: 0;
+  }
+
+  .titles {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+    flex-grow: 1;
+  }
+
+  .signal {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 6px var(--teal);
+    flex-shrink: 0;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .signal { animation: none; }
+  }
+
+  #report-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    letter-spacing: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.45rem 0.8rem;
+    border-radius: 3px;
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .btn:hover { color: var(--text); border-color: #3a5560; }
+
+  .btn.primary {
+    color: var(--amber);
+    border-color: #e8a33d40;
+  }
+  .btn.primary:hover { border-color: var(--amber); }
+
+  .viewer-wrap {
+    height: calc(100% - 53px);
+    background: #060a0d;
+  }
+
+  #pdf-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .fallback {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--text-faint);
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 2rem;
+  }
+  .fallback.show { display: flex; }
+
+  @media (max-width: 640px) {
+    .back span.label { display: none; }
+    #report-title { font-size: 0.82rem; }
+    .btn span.label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <a class="back" href="index.html">&larr; <span class="label">Reports</span></a>
+  <div class="divider"></div>
+  <div class="titles">
+    <span class="signal" aria-hidden="true"></span>
+    <span id="report-title">Report</span>
+  </div>
+  <div class="actions" id="actions"></div>
+</div>
+
+<div class="viewer-wrap">
+  <iframe id="pdf-frame" title="Report PDF"></iframe>
+  <div class="fallback" id="fallback">
+    <p>Your browser couldn't display the PDF inline.</p>
+    <a class="btn primary" id="fallback-download" href="#">Download PDF</a>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const pdf = params.get('pdf');
+  const repo = params.get('repo');
+  const title = params.get('title') || 'Report';
+
+  document.title = title + ' — Nael';
+  document.getElementById('report-title').textContent = title;
+
+  const actions = document.getElementById('actions');
+  let actionsHTML = '';
+  if (repo) {
+    actionsHTML += `<a class="btn primary" href="${repo}" target="_blank" rel="noopener">View code <span class="label">&rarr;</span></a>`;
+  }
+  if (pdf) {
+    actionsHTML += `<a class="btn" href="${pdf}" download>Download <span class="label">PDF</span></a>`;
+  }
+  actions.innerHTML = actionsHTML;
+
+  const frame = document.getElementById('pdf-frame');
+  const fallback = document.getElementById('fallback');
+  document.getElementById('fallback-download').href = pdf || '#';
+
+  if (pdf) {
+    frame.src = pdf;
+  } else {
+    frame.style.display = 'none';
+    fallback.classList.add('show');
+    fallback.querySelector('p').textContent = 'No report specified.';
+  }
+</script>
+
+</body>
+</html>

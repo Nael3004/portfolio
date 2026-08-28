@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nael — Engineering Reports</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a1014;
+    --panel: #101a21;
+    --panel-hover: #142029;
+    --line: #22323c;
+    --line-bright: #33495530;
+    --text: #e7ece9;
+    --text-dim: #7d939b;
+    --text-faint: #4a5c64;
+    --amber: #e8a33d;
+    --teal: #4fa98c;
+    --radius: 3px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(ellipse 900px 500px at 85% -10%, #12222420 0%, transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  ::selection { background: var(--amber); color: #0a1014; }
+
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- topbar ---------- */
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 2.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .topbar .mark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .topbar .mark .dot {
+    color: var(--amber);
+  }
+
+  .topbar nav {
+    display: flex;
+    gap: 2rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .topbar nav a { text-decoration: none; }
+  .topbar nav a:hover { color: var(--text); }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    padding: 4.5rem 2.5rem 4rem;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 8px var(--teal);
+  }
+
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: clamp(2rem, 4vw, 2.9rem);
+    line-height: 1.15;
+    margin: 0 0 1.1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--amber);
+  }
+
+  .hero p {
+    color: var(--text-dim);
+    font-size: 1.02rem;
+    max-width: 46ch;
+    margin: 0;
+  }
+
+  /* ---------- scope (signature element) ---------- */
+
+  .scope {
+    position: relative;
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background:
+      repeating-radial-gradient(circle at center, transparent 0, transparent 24px, var(--line-bright) 25px),
+      #0c161c;
+    max-width: 320px;
+    justify-self: center;
+    overflow: hidden;
+  }
+
+  .scope::before,
+  .scope::after {
+    content: '';
+    position: absolute;
+    background: var(--line-bright);
+  }
+  .scope::before { top: 0; bottom: 0; left: 50%; width: 1px; }
+  .scope::after { left: 0; right: 0; top: 50%; height: 1px; }
+
+  .scope .sweep {
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(from 0deg, transparent 0deg, #4fa98c55 18deg, transparent 40deg);
+    animation: rotate 5s linear infinite;
+    transform-origin: center;
+  }
+
+  .scope .blip {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--amber);
+    box-shadow: 0 0 6px var(--amber);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .scope .blip.b1 { top: 32%; left: 62%; animation-delay: 0.2s; }
+  .scope .blip.b2 { top: 60%; left: 38%; animation-delay: 1.1s; }
+  .scope .blip.b3 { top: 45%; left: 50%; animation-delay: 1.8s; }
+
+  .scope .readout {
+    position: absolute;
+    bottom: 0.9rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--text-faint);
+  }
+
+  @keyframes rotate { to { transform: rotate(360deg); } }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.25; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scope .sweep, .scope .blip { animation: none; }
+  }
+
+  /* ---------- reports section ---------- */
+
+  .reports {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 2.5rem 6rem;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-head h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .section-head .count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-faint);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.1rem;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.4rem 1.2rem;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  }
+
+  .card:hover, .card:focus-visible {
+    background: var(--panel-hover);
+    border-color: #3a5560;
+    transform: translateY(-2px);
+  }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.5rem;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .tag.thesis { color: var(--amber); background: #e8a33d1a; border: 1px solid #e8a33d40; }
+  .tag.sim { color: var(--teal); background: #4fa98c1a; border: 1px solid #4fa98c40; }
+  .tag.robotics { color: #8fb3e8; background: #8fb3e81a; border: 1px solid #8fb3e840; }
+
+  .signal {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 5px var(--teal);
+    margin-top: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.08rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .card p {
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    flex-grow: 1;
+  }
+
+  .card-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--line);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+  }
+
+  .read {
+    color: var(--amber);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .card:hover .read { gap: 0.5rem; }
+  .read span { transition: transform 0.15s ease; }
+
+  .has-code {
+    color: var(--text-faint);
+  }
+
+  /* ---------- footer ---------- */
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 1.6rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-faint);
+  }
+
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--text-dim); }
+
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; padding-top: 3rem; }
+    .scope { max-width: 220px; justify-self: start; }
+    .topbar nav { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="mark">NAEL<span class="dot">.</span></div>
+  <nav>
+    <a href="#reports">Reports</a>
+    <a href="mailto:nael.belhaj@gmail.com">Contact</a>
+  </nav>
+</div>
+
+<div class="hero">
+  <div>
+    <div class="eyebrow">Autonomy &amp; ML Engineering</div>
+    <h1>Machine learning engineer focused on measurement and experimentation</em>.</h1>
+    <p>Building pipelines, then finding out what in them actually works. Simulation-to-training data generation,
+distributed training, and ablation at scale across vision, audio, and graph data.</p>
+  </div>
+  <div class="scope" aria-hidden="true">
+    <div class="sweep"></div>
+    <div class="blip b1"></div>
+    <div class="blip b2"></div>
+    <div class="blip b3"></div>
+    <div class="readout">CONTACTS: 03</div>
+  </div>
+</div>
+
+<div class="reports" id="reports">
+  <div class="section-head">
+    <h2>Reports</h2>
+    <span class="count" id="report-count"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer>
+  <span>&copy; <span id="year"></span> Nael</span>
+  <a href="https://github.com/Nael3004" target="_blank" rel="noopener">github.com/Nael3004</a>
+</footer>
+
+<script>
+  // ---- Edit this array to add, remove, or update reports. ----
+  // tag: 'thesis' | 'sim' | 'robotics'  (add new .tag.<name> rules in <style> for new categories)
+  // repo: omit or leave empty if the project has no public code
+  const projects = [
+    {
+      title: "Synthetic Data Generation for Audio-Visual Sounding Object Detection",
+      description: "MSc thesis: generating synthetic training data to improve sounding object detection in audio-visual models.",
+      pdf: "reports/thesis.pdf",
+      repo: ""
+    },
+    {
+      title: "Dimension scaled priors and dimension reduction for Bayesian optimzation",
+      description: "Investigation into the dimensionality curse in Bayesian optimization and experiments with proposed solutions.",
+      pdf: "reports/BO_DSP_Project.pdf",
+      repo: "https://github.com/Nael3004/BoProject"
+    },
+    {
+      title: "StarNet: Image Segmentation of Astronomy Images with SAM",
+      description: "Implementation of a data pipeline and fine-tuning of SAM to segment stars in satellite images.",
+      pdf: "reports/SADL_starnet.pdf",
+      repo: "https://github.com/Nael3004/StarNet"
+    },
+    {
+      title: "Quantum Algorithms Miniproject - Quantum Extreme Learning Machines",
+      description: "Implementation and training of basic simulated quantum extreme learning machines which promise fast and stable training.",
+      pdf: "reports/QA_miniproject.pdf",
+      repo: ""
+    },
+    {
+      title: "Analyzing the Limits of RL-driven Optimization on Chargax",
+      description: "Experimentation on the limits of outcome improvements of an RL environment and the effect of future information on performance.",
+      pdf: "reports/sadrl_chargax.pdf",
+      repo: ""
+    },
+    {
+      title: "Community Aware Anomaly Detection in Weighted Networks",
+      description: "Adaptation of the Community-Aware Detection of Anomalies (CADA) algorithm for weighted networks and experimentation with ensemble methods.",
+      pdf: "reports/SNACS_Project.pdf",
+      repo: ""
+    }
+  ];
+
+  //const tagLabels = { thesis: "Thesis", sim: "Simulation", robotics: "Robotics" };
+
+  const grid = document.getElementById('grid');
+
+  grid.innerHTML = projects.map(p => {
+    const params = new URLSearchParams({ pdf: p.pdf, title: p.title });
+    if (p.repo) params.set('repo', p.repo);
+    const href = `viewer.html?${params.toString()}`;
+    return `
+      <a class="card" href="${href}">
+        <div class="card-top">
+          <span class="tag ${p.tag}">${tagLabels[p.tag] || p.tag}</span>
+          <span class="signal" aria-hidden="true"></span>
+        </div>
+        <h3>${p.title}</h3>
+        <p>${p.description}</p>
+        <div class="card-foot">
+          <span class="read">Read report <span>&rarr;</span></span>
+          ${p.repo ? '<span class="has-code">CODE PUBLIC</span>' : ''}
+        </div>
+      </a>
+    `;
+  }).join('');
+
+  document.getElementById('report-count').textContent = String(projects.length).padStart(2, '0') + ' ON FILE';
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
